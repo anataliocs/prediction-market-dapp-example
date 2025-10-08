@@ -1,0 +1,64 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "CI",
+    "NODE_ENV",
+    "NEXT_PUBLIC_WALLET_CONNECT_ID",
+    "NEXT_PUBLIC_VERCEL_URL",
+    "VERCEL_URL",
+    "NEXTAUTH_SECRET",
+    "POSTGRES_PRISMA_URL",
+    "POSTGRES_URL_NON_POOLING"
+  ],
+  "pipeline": {
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "dependsOn": ["^build", "^db:generate"],
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build", "^db:generate"],
+      "env": [
+        "ANALYZE",
+        "GITHUB_REPOSITORY",
+        "NEXT_PUBLIC_WALLET_CONNECT_ID",
+        "NEXT_PUBLIC_VERCEL_URL"
+      ],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "storybook:dev": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "persistent": true
+    },
+    "storybook:build": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"]
+    },
+    "test:e2e": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "test:unit": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "coupling-graph": {
+      "cache": false,
+      "dependsOn": ["^build"]
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:push": {
+      "cache": false
+    },
+    "prisma:seed": {
+      "cache": false
+    }
+  }
+}

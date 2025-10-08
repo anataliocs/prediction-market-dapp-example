@@ -1,0 +1,5 @@
+{
+  "extends": "typescript-config/base.json",
+  "include": ["index.ts", "./data"],
+  "exclude": ["./prisma/seed.ts"]
+}
