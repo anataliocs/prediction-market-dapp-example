@@ -2,7 +2,6 @@
 pragma solidity 0.8.15;
 
 import { Auth } from "./mixins/Auth.sol";
-import { Fees } from "./mixins/Fees.sol";
 import { Assets } from "./mixins/Assets.sol";
 import { Hashing } from "./mixins/Hashing.sol";
 import { Trading } from "./mixins/Trading.sol";
@@ -21,7 +20,6 @@ contract Exchange is
     BaseExchange,
     Auth,
     Assets,
-    Fees,
     AssetOperations,
     Hashing("Prediction Market Exchange", "1"),
     NonceManager,

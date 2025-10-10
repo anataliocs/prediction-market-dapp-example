@@ -2,7 +2,7 @@
 pragma solidity <0.9.0;
 
 bytes32 constant ORDER_TYPEHASH = keccak256(
-    "Order(uint256 salt,address maker,address signer,address taker,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint256 expiration,uint256 nonce,uint256 feeRateBps,uint8 side,uint8 signatureType)"
+    "Order(uint256 salt,address maker,address signer,address taker,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint256 expiration,uint256 nonce,uint8 side)"
 );
 
 struct Order {
@@ -26,24 +26,10 @@ struct Order {
     uint256 expiration;
     /// @notice Nonce used for onchain cancellations
     uint256 nonce;
-    /// @notice Fee rate, in basis points, charged to the order maker, charged on proceeds
-    uint256 feeRateBps;
     /// @notice The side of the order: BUY or SELL
     Side side;
-    /// @notice Signature type used by the Order: EOA, POLY_PROXY or POLY_GNOSIS_SAFE
-    SignatureType signatureType;
     /// @notice The order signature
     bytes signature;
-}
-
-enum SignatureType
-// 0: ECDSA EIP712 signatures signed by EOAs
-{
-    EOA,
-    // 1: EIP712 signatures signed by EOAs that own Proxy wallets
-    POLY_PROXY,
-    // 2: EIP712 signatures signed by EOAs that own Gnosis safes
-    POLY_GNOSIS_SAFE
 }
 
 enum Side

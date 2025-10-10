@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity <0.9.0;
 
-import { IFees } from "../interfaces/IFees.sol";
 import { IHashing } from "../interfaces/IHashing.sol";
 import { ITrading } from "../interfaces/ITrading.sol";
 import { IRegistry } from "../interfaces/IRegistry.sol";
@@ -14,7 +13,7 @@ import { Order, Side, MatchType, OrderStatus } from "../libraries/OrderStructs.s
 
 /// @title Trading
 /// @notice Implements logic for trading CTF assets
-abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, INonceManager, IAssetOperations {
+abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceManager, IAssetOperations {
     /// @notice Mapping of orders to their current status
     mapping(bytes32 => OrderStatus) public orderStatus;
 
@@ -38,9 +37,6 @@ abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, 
         // Validate signature
         validateOrderSignature(orderHash, order);
 
-        // Validate fee
-        if (order.feeRateBps > getMaxFeeRate()) revert FeeTooHigh();
-
         // Validate the token to be traded
         validateTokenId(order.tokenId);
 
@@ -59,9 +55,8 @@ abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, 
         uint256 making = fillAmount;
         (uint256 taking, bytes32 orderHash) = _performOrderChecks(order, making);
 
-        uint256 fee = CalculatorHelper.calculateFee(
-            order.feeRateBps, order.side == Side.BUY ? taking : making, order.makerAmount, order.takerAmount, order.side
-        );
+        // Mock flat fee
+        uint256 fee = 1;
 
         (uint256 makerAssetId, uint256 takerAssetId) = _deriveAssetIds(order);
 
@@ -116,9 +111,9 @@ abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, 
         _fillMakerOrders(takerOrder, makerOrders, makerFillAmounts);
 
         taking = _updateTakingWithSurplus(taking, takerAssetId);
-        uint256 fee = CalculatorHelper.calculateFee(
-            takerOrder.feeRateBps, takerOrder.side == Side.BUY ? taking : making, making, taking, takerOrder.side
-        );
+
+        // Mock flat fee
+        uint256 fee = 1;
 
         // Execute transfers
 
@@ -166,13 +161,9 @@ abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, 
 
         uint256 making = fillAmount;
         (uint256 taking, bytes32 orderHash) = _performOrderChecks(makerOrder, making);
-        uint256 fee = CalculatorHelper.calculateFee(
-            makerOrder.feeRateBps,
-            makerOrder.side == Side.BUY ? taking : making,
-            makerOrder.makerAmount,
-            makerOrder.takerAmount,
-            makerOrder.side
-        );
+
+        // Mock flat fee
+        uint256 fee = 1;
         (uint256 makerAssetId, uint256 takerAssetId) = _deriveAssetIds(makerOrder);
 
         _fillFacingExchange(making, taking, makerOrder.maker, makerAssetId, takerAssetId, matchType, fee);
@@ -309,7 +300,6 @@ abstract contract Trading is IFees, ITrading, IHashing, IRegistry, ISignatures, 
         // Charge fee to the payer if any
         if (fee > 0) {
             _transfer(payer, receiver, tokenId, fee);
-            emit FeeCharged(receiver, tokenId, fee);
         }
     }
 

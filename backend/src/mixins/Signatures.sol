@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import { SignatureType, Order } from "../libraries/OrderStructs.sol";
+import { Order } from "../libraries/OrderStructs.sol";
 
 import { ISignatures } from "../interfaces/ISignatures.sol";
 

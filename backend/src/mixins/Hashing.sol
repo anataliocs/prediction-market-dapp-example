@@ -25,9 +25,7 @@ abstract contract Hashing is IHashing {
                     order.takerAmount,
                     order.expiration,
                     order.nonce,
-                    order.feeRateBps,
-                    order.side,
-                    order.signatureType
+                    order.side
                 )
             );
     }

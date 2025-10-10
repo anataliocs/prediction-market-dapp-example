@@ -11,6 +11,8 @@ Prediction market dApp with Solidity smart contracts.
 
 See `system-design.png` or `system-design.pdf` in root directory for a higher-resolution, more readable version.
 
+
+
 **Front-End Tech Stack:**
 - 📏 [TypeScript 5.0](https://www.typescriptlang.org/)
 - ⚡️ [Next.js 13.2](https://nextjs.org/)
@@ -184,41 +186,10 @@ collateral asset (ERC20).
 
 ## Fees
 
-Fees are levied in the output asset (proceeds). Fees for binary options with a complementary relationship (ie **`A`** + **`A'`** = **`C`**) must be symmetric to preserve market integrity. Symmetric means that someone selling 100 shares of `A` @ $0.99 should pay the same fee value as someone buying 100 `A'` @ $0.01. An intuition for this requires understanding that minting/merging a complementary token set for collateral can happen at any time. Fees are thus implemented in the following manner.
-
-If buying (ie receiving **`A`** or **`A'`**), the fee is levied on the proceed tokens. If selling (ie receiving **`C`**), the fee is levied on the proceed collateral. The base fee rate (`baseFeeRate`) is signed into the order struct. The base fee rate corresponds to 2x the fee rate (collateral per unit of outcome token) paid by traders when the price of the two tokens is equal (ie $0.50 and $0.50). Moving away from a centered price, the following formulas are used to calculate the fees making sure to maintain symmetry.
-
-usdcFee =  baseRate * min(price, 1-price) * outcomeShareCount
-
-**SELL:** If selling outcome tokens (base) for collateral (quote):
-
-$feeQuote =  baseRate * \min(price, 1-price) * size$
-
-**BUY:** If buying outcome tokens (base) with collateral (quote):
-
-$feeBase =  baseRate * \min(price, 1-price) * \frac{size}{price}$
-
-### Fee Examples:
-
-*(assume the full order is filled)*
-
-`baseFeeRate` = 0.02 (usdc/condition)
+Simplified flat fee model.
 
 ____
 
-BUY **100** **`A`** @ **$0.50**
-
-`fee` = 2 **`A`**
-
-($1.00 in value)
-___
-
-SELL **100** **`A'`** @ **$0.50**
-
-`fee` = 1.0 **`C`**
-
-($1.00 in value)
-___
 
 # Exchange
 
