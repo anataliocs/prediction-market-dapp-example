@@ -7,9 +7,9 @@ Prediction market dApp with Solidity smart contracts.
 
 ## System Design
 
-<img width="4807" height="1139" alt="Prediction High-Level Flow" src="https://github.com/user-attachments/assets/6599a416-b62e-453c-8ad7-9a9415b37cad" />
+![system-design.png](system-design.png)
 
-See `system-design.pdf` in root directory for higher-resolution, more readable version.
+See `system-design.png` or `system-design.pdf` in root directory for a higher-resolution, more readable version.
 
 **Front-End Tech Stack:**
 - 📏 [TypeScript 5.0](https://www.typescriptlang.org/)
