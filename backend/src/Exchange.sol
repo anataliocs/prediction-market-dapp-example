@@ -29,9 +29,9 @@ contract Exchange is
     Signatures,
     Trading
 {
-    constructor(address _collateral, address _ctf, address _proxyFactory, address _safeFactory)
+    constructor(address _collateral, address _ctf, address _safeFactory)
         Assets(_collateral, _ctf)
-        Signatures(_proxyFactory, _safeFactory)
+        Signatures(_safeFactory)
     { }
 
     /*//////////////////////////////////////////////////////////////
@@ -62,18 +62,6 @@ contract Exchange is
     /*//////////////////////////////////////////////////////////////
                         CONFIGURATION
     //////////////////////////////////////////////////////////////*/
-
-    /// @notice Sets a new Proxy Wallet factory for the Exchange
-    /// @param _newProxyFactory - The new Proxy Wallet factory
-    function setProxyFactory(address _newProxyFactory) external onlyAdmin {
-        _setProxyFactory(_newProxyFactory);
-    }
-
-    /// @notice Sets a new safe factory for the Exchange
-    /// @param _newSafeFactory  - The new Safe wallet factory
-    function setSafeFactory(address _newSafeFactory) external onlyAdmin {
-        _setSafeFactory(_newSafeFactory);
-    }
 
     /// @notice Registers a tokenId, its complement and its conditionId for trading on the Exchange
     /// @param token        - The tokenId being registered

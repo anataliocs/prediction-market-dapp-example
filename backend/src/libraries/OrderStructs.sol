@@ -40,9 +40,9 @@ enum SignatureType
 // 0: ECDSA EIP712 signatures signed by EOAs
 {
     EOA,
-    // 1: EIP712 signatures signed by EOAs that own Polymarket Proxy wallets
+    // 1: EIP712 signatures signed by EOAs that own Proxy wallets
     POLY_PROXY,
-    // 2: EIP712 signatures signed by EOAs that own Polymarket Gnosis safes
+    // 2: EIP712 signatures signed by EOAs that own Gnosis safes
     POLY_GNOSIS_SAFE
 }
 

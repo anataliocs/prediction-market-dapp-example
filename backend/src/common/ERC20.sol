@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.15;
 
-import {IERC20} from "common/interfaces/IERC20.sol";
+import {IERC20} from "./interfaces/IERC20.sol";
 
 /// @notice Forked to have non-constant decimals, to set after deployment.
-/// @author Polymarket
 /// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/ReentrancyGuard.sol)
 /// @dev Do not manually set balances without updating totalSupply, as the sum of all user balances must not exceed it.
 abstract contract ERC20 is IERC20 {

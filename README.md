@@ -16,14 +16,6 @@ See `system-design.png` or `system-design.pdf` in root directory for a higher-re
 - ⚡️ [Next.js 13.2](https://nextjs.org/)
 - ⚛️ [React 18.2](https://reactjs.org/)
 - 🌬️ [Tailwind CSS 3.3](https://tailwindcss.com/)
-- 📕 [Storybook 7.0](https://storybook.js.org/)
-- 🧪 [Testing Library](https://testing-library.com/)
-- 🃏 [Jest](https://jestjs.io/)
-- 🎭 [Playwright](https://playwright.dev/)
-- 💡 [Lighthouse](https://developer.chrome.com/docs/lighthouse/)
-- 🧹 [ESLint](https://eslint.org/)
-- 🤖 [CommitLint](https://commitlint.js.org/)
-- 💖 [Prettier](https://prettier.io/)
 - 📦 [pnpm](https://pnpm.io/)
 - 🏎️ [Turborepo](https://turbo.build/repo)
 - 👷 [Github Actions](https://github.com/features/actions)
@@ -36,91 +28,53 @@ See `system-design.png` or `system-design.pdf` in root directory for a higher-re
 - `apps/website`: another Next.js app with Tailwind CSS
 - `packages/ui`: a stub React component library with Tailwind CSS, shared by both `website-ssr` and `website` apps
 - `packages/utils`: utilities shared by both `website-ssr` and `website` apps
-- `packages/eslint-config-custom`: shared ESLint configuration
-- `packages/jest-config`: shared Jest configuration
-- `packages/lighthouse-config`: shared Lighthouse configuration
 - `packages/next-config`: shared Next.js configuration
-- `packages/playwright-config`: shared Playwright configuration
-- `packages/storybook-config`: shared Storybook configuration
 - `packages/tailwindcss-config`: shared Tailwind CSS configuration
 - `packages/typescript-config`: shared `tsconfig.json` files
 
-## Getting Started
+## Getting Started - Backend Smart Contracts
 
-**Run the following command:**
-
-```
-git clone https://github.com/Developer-DAO/academy-turbo
-cd academy-turbo
-pnpm install
+**Install Foundry CLI:**
+```terminaloutput
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
 ```
 
-### Develop Next.js
+**Build contracts:**
+```terminaloutput
+cd backend
+forge build
+```
 
-If you want to start `apps/academy` in development mode, and watch for changes in `packages/ui`, run at the root:
+## Getting Started - Frontend
 
+**Create a `.env` file in the `academy` directory and add the following variables:**
+```terminaloutput
+POSTGRES_PRISMA_URL=""
+POSTGRES_URL_NON_POOLING=""
+```
+
+**Run front-end:**
 ```
 pnpm dev --filter academy
 ```
 
-### Build Next.js
-
-If you want to build `apps/academy` for production, run at the root:
-
+**Build front-end:**
 ```
 pnpm build --filter academy
 ```
 
-If you want to see an analysis of the generated bundles, specify the `ANALYZE` environment variable:
-
-```
-ANALYZE=true pnpm build
-```
-
-### Preview Next.js
-
-If you want to preview production builds of `apps/website-ssr` and `apps/website`, run at the root:
-
+**Preview UI:**
 ```
 pnpm start
 ```
 
-### Develop Storybook
-
-If you want to start all Storybook projects in development mode, run at the root:
-
-```
-pnpm storybook:dev
-```
-
-### Develop Storybook
-
-If you want to build all Storybook projects, run at the root:
-
-```
-pnpm storybook:build
-```
-
-### Unit tests
-
-If you want to run unit tests for all projects, run at the root:
-
+**Test:**
 ```
 pnpm test:unit
 ```
 
-### End-to-end tests
-
-If you want to run e2e tests for all projects, run at the root:
-
-```
-pnpm test:e2e
-```
-
-### Lint
-
-If you want to run linting for all projects, run at the root:
-
+**Lint:**
 ```
 pnpm lint
 ```
@@ -131,7 +85,8 @@ pnpm lint
 
 ## Overview
 
-The `CTFExchange` contract facilitates atomic swaps between binary outcome tokens (ERC1155) and the collateral asset (ERC20). It is intended to be used in a hybrid-decentralized exchange model wherein there is an operator that provides matching/ordering/execution services while settlement happens on-chain,non-custodially according to instructions in the form of signed order messages. The CTF exchange allows for matching operations that include a mint/merge operation which allows orders for complementary outcome tokens to be crossed. Orders are represented as signed typed structured data (EIP712). Additionally, the CTFExchange implements symmetric fees. When orders are matched, one side is considered the maker and the other side is considered the taker. The relationship is always either one to one or many to one (maker to taker) and any price improvement is captured by the taking agent.
+The `Exchange` contract facilitates atomic swaps between outcome tokens (ERC1155) and the 
+collateral asset (ERC20). 
 
 ## Matching Scenarios
 
@@ -142,7 +97,7 @@ The `CTFExchange` contract facilitates atomic swaps between binary outcome token
 * **`C`** - ERC20 collateral token.
 
 
-*\* Complements assumes 1 outcome token and 1 of its complement can always be merged into 1 unit of collateral and 1 unit of collateral can always be split into 1 outcome token and 1 of its complement (ie **`A`** + **`A'`** = **`C`**). Also assume that outcome tokens and collateral have the same decimals/base unit. Finally, the following examples assume **`C`** is USDC for pricing.*
+*\* Complements assume one outcome token and 1 of its complement can always be merged into 1 unit of collateral and 1 unit of collateral can always be split into 1 outcome token and 1 of its complement (ie **`A`** + **`A'`** = **`C`**). Also assume that outcome tokens and collateral have the same decimals/base unit. Finally, the following examples assume **`C`** is USDC for pricing.*
 
 ### Scenario 1 - `NORMAL`
 
@@ -180,10 +135,10 @@ The `CTFExchange` contract facilitates atomic swaps between binary outcome token
 
 `matchOrders(makerOrder, [takerOrder], 50, [25])`
 
-1. Transfer **50** token **`A`** from **userB** into `CTFExchange`
-2. Transfer **25** **`C`** from **userA** into `CTFExchange`
-3. Transfer **50** token **`A`** from `CTFExchange` to **userA**
-4. Transfer **25** **`C`** from `CTFExchange` to **userB**
+1. Transfer **50** token **`A`** from **userB** into `Exchange`
+2. Transfer **25** **`C`** from **userA** into `Exchange`
+3. Transfer **50** token **`A`** from `Exchange` to **userA**
+4. Transfer **25** **`C`** from `Exchange` to **userB**
 
 ### Scenario 2 - `MINT`
 
@@ -221,11 +176,11 @@ The `CTFExchange` contract facilitates atomic swaps between binary outcome token
 
 `matchOrders(makerOrder, [takerOrder], 25, 25)`
 
-1. Transfer **25** **`C`** from **userB** into `CTFExchange`
-2. Transfer **25** **`C`** from **userA** into `CTFExchange`
+1. Transfer **25** **`C`** from **userB** into `Exchange`
+2. Transfer **25** **`C`** from **userA** into `Exchange`
 3. Mint **50** token sets (= **50** token **`A`** + **50** token **`A'`**)
-4. Transfer **50** token **`A`** from `CTFExchange` to **userA**
-5. Transfer **50** token **`A'`** from `CTFExchange` to **userB**
+4. Transfer **50** token **`A`** from `Exchange` to **userA**
+5. Transfer **50** token **`A'`** from `Exchange` to **userB**
 
 ## Fees
 
@@ -277,29 +232,12 @@ Initializes the abstract contracts it inherits from including `Asset` `Signature
 
 Parameters:
 
-```java
+```solidity
 address _collateral // ERC20 collateral asset (USDC)
 address _ctf //  ERC1155 outcome tokens contract (gnosis conditional tokens framework)
-address _proxyFactory // Polymarket proxy factory
 address _safeFactory // Gnosis safe factory contract 
 address _feeReceiver // account to accumulate feed to 
 ```
-
-## `pauseTrading`
-
-Allows admin to pause trading.
-
-Requirements:
-
-- caller is `admin` (`onlyAdmin`)
-
-## `unpauseTrading`
-
-Allows admin to unpause trading.
-
-Requirements:
-
-caller is `admin` (`onlyAdmin`)
 
 ## `fillOrder`
 
@@ -307,15 +245,14 @@ Fills the fill amount of an order with `msg.sender` as the taker
 
 Parameters:
 
-```java
+```solidity
 Order order // The order to be filled
 uint256 fillAmount // The amount to be filled, always in terms of the maker amount
 ```
 
 Requirements:
 
-- caller is `operator` (`onlyOperator`)
-- trading is not `paused` (`notPaused`)
+- caller is `admin` (`onlyAdmin`)
 - function is being called for first time in control flow or the previous function call has resolved (`nonReentrant`)
 
 
@@ -325,15 +262,14 @@ Fills an array of orders for the corresponding fill amounts with `msg.sender` as
 
 Parameters:
 
-```java
+```solidity
 Order[] orders // The order to be filled
 uint256[] fillAmounts // The amounts to be filled, always in terms of the maker amount
 ```
 
 Requirements:
 
-- caller is `operator` (`onlyOperator`)
-- trading is not `paused` (`notPaused`)
+- caller is `admin` (`onlyAdmin`)
 - function is being called for first time in control flow or the previous function call has resolved (`nonReentrant`)
 
 ## `matchOrders`
@@ -342,7 +278,7 @@ Matches a taker order against an array of maker orders for the specified amounts
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // The active order to be matched
 Order[] makerOrders // The array of maker orders to be matched against the active order
 uint256 takerFillAmount // The amount to fill on the taker order, always in terms of the maker amount
@@ -351,8 +287,7 @@ uint256[] makerFillAmounts // The array of amounts to fill on the maker orders, 
 
 Requirements:
 
-- caller is `operator` (`onlyOperator`)
-- trading is not `paused` (`notPaused`)
+- caller is `admin` (`onlyAdmin`)
 - function is being called for first time in control flow or the previous function call has resolved (`nonReentrant`)
 
 ## `setFeeReceiver`
@@ -361,7 +296,7 @@ Sets `feeReceiver` to new address.
 
 Parameters:
 
-```java
+```solidity
 address _feeReceiver // The new fee receiver address
 ```
 
@@ -369,16 +304,6 @@ Requirements:
 
 - caller is `admin` (`onlyAdmin`)
 
-
-## `setProxyFactory`
-
-Sets `proxyFactory` to new Polymarket proxy wallet factory address.
-
-Parameters:
-
-```java
-address _newProxyFactory // The new Proxy Wallet factory
-```
 
 Requirements:
 
@@ -390,7 +315,7 @@ Sets `safeFactory` to new gnosis safe factory address.
 
 Parameters:
 
-```java
+```solidity
 address _newSafeFactory // The new Safe wallet factory
 ```
 Requirements:
@@ -404,7 +329,7 @@ Registers a tokenId, its complement and its conditionId for trading.
 
 Parameters:
 
-```java
+```solidity
 uint256 token // The ERC1155 (ctf) tokenId being registered
 uint256 complement // The ERC1155 (ctf) token ID of the complement of token
 bytes32 // The corresponding CTF conditionId
@@ -427,13 +352,13 @@ Get the status of an order. An order can either be not-filled, partially filled 
 
 Parameters:
 
-```java
+```solidity
 bytes32 orderHash // hash of the order
 ```
 
 Returns:
 
-```java
+```solidity
 OrderStatus // status object for the order hash
 ```
 
@@ -443,7 +368,7 @@ Validates an order. Hashes an order and calls `_validateOrder` with the order ha
 
 Parameters:
 
-```java
+```solidity
 Order order // order to be validated
 ```
 
@@ -453,7 +378,7 @@ Cancels an order. Calls `_cancelOrder` with the order. An order can only be canc
 
 Parameters:
 
-```java
+```solidity
 Order order // order to be cancelled
 ```
 
@@ -463,7 +388,7 @@ Cancels a set of orders by calling `_cancelOrder` on each order is provided orde
 
 Parameters:
 
-```java
+```solidity
 Order[] orders // orders to be cancelled
 ```
 
@@ -478,7 +403,7 @@ Requirements:
 
 Parameters:
 
-```java
+```solidity
 Order order // order  to cancel
 ```
 
@@ -500,7 +425,7 @@ Requirements:
 
 Parameters:
 
-```java
+```solidity
 bytes32 orderHash // hash of order to validate
 Order order // order object corresponding to orderHash
 ```
@@ -511,7 +436,7 @@ Fills an order against the caller. First validates the order, then fills it up t
 
 Parameters:
 
-```java
+```solidity
 Order order // order to fill
 uint256 fillAmount // amount to be filled, always in terms of the maker amount
 address to // address to receive proceeds from filling the order
@@ -526,7 +451,7 @@ Emits:
 
 Fills a set of orders against the caller by calling `_fillOrders` for each order and corresponding fill amount.
 
-```java
+```solidity
 Order[] orders // orders to fill
 uint256[] fillAmounts // amounts to be filled for each order in orders, always in terms of the maker amount
 address to // address to receive proceeds from filling the orders
@@ -548,15 +473,15 @@ Matches a taker order against an array of maker orders up to the amounts specifi
 
 Requirements:
 
-- all orders valid
+- all orders are valid
 - making amounts are valid for each order
 - taker order provides enough assets for the filling of all maker orders to the amounts specified
-- each maker order is marketable against taker order
-- taker gets at least as much proceeds as they expect
+- each maker order is marketable against the taker order
+- taker gets at least as many proceeds as they expect
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // taker order to be matched
 Order[] makerOrders // array of maker orders to be matched against the taker order
 uint256 takerFillAmount // amount to fill on the taker order, in terms of the maker amount
@@ -570,11 +495,11 @@ Emits:
 
 ## `_fillMakerOrders`
 
-Fills an array of maker orders for the specified amounts.
+Fills an array with maker orders for the specified amounts.
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // taker order
 Order[] makerOrders // maker orders
 uint256[] makerFillAmounts // maker amounts to fill on each maker order
@@ -588,11 +513,11 @@ Requirements:
 
 - valid taker and maker order
 - maker and taker order can be crossed
-- amount provided is fillable for maker order
+- the amount provided is fillable for the maker order
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // taker order object
 Order makerOrder // maker order object
 uint256 fillAmount // maker amount to be filled on makerOrder
@@ -614,14 +539,14 @@ Requirements:
 
 Parameters:
 
-```java
+```solidity
 Order order // order being validated
 uint256 making // maker amount to be filled of order
 ```
 
 Returns:
 
-```java
+```solidity
 uint256 takingAmount // amount of taking amount corresponding to supplied taking amount 
 uint256 remainingAmount // maker amount remaining on the order. 
 ```
@@ -639,7 +564,7 @@ Fills a maker order using the Exchange as the counterparty. Follows the followin
 
 Parameters:
 
-```java
+```solidity
 uint256 makingAmount // Amount to be filled in terms of maker amount
 uint256 takingAmount // Amount to be filled in terms of taker amount
 Order order // the order to be filed
@@ -652,14 +577,14 @@ Provided a taker and maker order determines the matching operation that is neede
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // the taker order
 Order makerOrder // the maker order
 ```
 
 Returns:
 
-```java
+```solidity
 MatchType // type of match NORMAL, MINT or MERGE
 ```
 
@@ -669,7 +594,7 @@ Executes a CTF call to match orders by minting new Outcome tokens or merging Out
 
 Parameters:
 
-```java
+```solidity
 uint256 makingAmount // Amount to be filled in terms of maker amount, used as amount in merge case
 uint256 takingAmount // Amount to be filled in terms of taker amount, used as amount in mint case
 Order order // order to be filled
@@ -689,7 +614,7 @@ Requirements:
 
 Parameters:
 
-```java
+```solidity
 Order takerOrder // the taker order
 Order makerOrder // the maker order
 MatchType matchType // the match type
@@ -701,7 +626,7 @@ Charges a fee from a payer to the receiver.
 
 Parameters:
 
-```java
+```solidity
 address payer // fee payer
 address receiver // fee recipient
 uint256 tokenId // token id of fee, 0 if collateral
@@ -718,7 +643,7 @@ Updates the order status. Will mark as completed if the making amount plus any a
 
 Parameters:
 
-```java
+```solidity
 bytes32 orderHash // order hash
 Order order // order object
 uint256 makingAmount // making amount
@@ -726,7 +651,7 @@ uint256 makingAmount // making amount
 
 Returns:
 
-```java
+```solidity
 uint256 // remaining maker amount for order
 ```
 
@@ -736,14 +661,14 @@ Checks to see how much of the tokenId the exchange contract has received and ver
 
 Parameters:
 
-```java
+```solidity
 uint256 minimumAmount // minimum amount exchange should have of tokenId
 uint256 tokenId // tokenId to get balance of
 ```
 
 Returns:
 
-```java
+```solidity
 uint256 // amount of tokenId in contract
 ```
 
@@ -759,13 +684,13 @@ Gets the contract's balance of collateral (`tokenID` == 0) or the contract's bal
 
 Parameters:
 
-```java
+```solidity
 uint256 tokenId // ERC1155 tokenID for ctf, or 0 for getting collateral (ERC20) balance
 ```
 
 Returns:
 
-```java
+```solidity
 uint256 // token balance
 ```
 
@@ -775,7 +700,7 @@ Transfers a quantity of assets, defined by a tokenID, from one address to anothe
 
 Parameters:
 
-```java
+```solidity
 address from // account from which to transfer assets
 address to // account to which to transfer assets
 uint256 id // ID of asset to transfer. ERC1155 tokenID for ctf, or 0 for getting collateral (ERC20) balance
@@ -788,7 +713,7 @@ Called by `_transfer` in the case that `id` == 0. Transfers ERC20 collateral usi
 
 Parameters:
 
-```java
+```solidity
 address from // account from which to transfer the ERC20 tokens
 address to // account to which to transfer the ERC20 tokens
 uint256 value // amount of ERC20 tokens to transfer
@@ -800,7 +725,7 @@ Mints a full conditional token set from collateral by calling the `splitPostion`
 
 Parameters:
 
-```java
+```solidity
 bytes32 conditionId // id of condition on which to split
 uint256 amount // quantity of collateral to split. Note the collateral and minted conditional tokens will use the same number of decimals.
 ```
@@ -812,7 +737,7 @@ Opposite of `_mint`. Takes complete sets (equal parts of two complementary outco
 
 Parameters:
 
-```java
+```solidity
 bytes32 conditionId // id of condition on which to merge
 uint256 amount // quantity of complete sets to burn for their underlying collateral.
 ```
@@ -821,7 +746,9 @@ uint256 amount // quantity of complete sets to burn for their underlying collate
 
 # Registry
 
-The `CTFExchange` supports "binary matching". This assumes that two complementary tokens are always worth, in sum, 1 unit of underlying collateral. This is enforced by the CTF contract which always allows minting and merging of full sets (complete collection of outcomes, in our case `A` and its binary complement `A'`). What this ultimately unlocks for the `CTFExchange` is matching between buy orders of `A` and `A'` (via a preceeding "mint" operation), and sell orders of `A` and `A'` (via a succeeding "merge" operation). The `CTFExchange` gets orders to match and is able to determine whether or not a "mint" or "merge" operation is ncessary. The challenge, is that the "mint"/"merge" operation requires knowing the order's base asset's (conditional token) corresponding `conditionId`. Thus, there needs to be a way for the `conditionId` to be gotten from the `tokenId`. The `Registry` is responsible for this function and maintains a mapping of `tokenId`s to `OutcomeToken` objects which include information relating to the specific `tokenId` including the `complement`'s `tokenId`, and the parent `conditionId`. It is the responsibility of operators to register new outcome tokens. Note all methods assume benevolent input by the operator, specifically that they are registering the correct tokenIds/complements/conditions and that they are all binary outcomes that are valid in the context of the CTF contract.
+The `Exchange` supports "binary matching". 
+This assumes that two complementary tokens are always worth, in sum, 1 unit of underlying collateral. 
+This is enforced by the CTF contract which always allows minting and merging of full sets (complete collection of outcomes, in our case `A` and its binary complement `A'`). What this ultimately unlocks for the `CTFExchange` is matching between buy orders of `A` and `A'` (via a preceeding "mint" operation), and sell orders of `A` and `A'` (via a succeeding "merge" operation). The `CTFExchange` gets orders to match and is able to determine whether or not a "mint" or "merge" operation is ncessary. The challenge, is that the "mint"/"merge" operation requires knowing the order's base asset's (conditional token) corresponding `conditionId`. Thus, there needs to be a way for the `conditionId` to be gotten from the `tokenId`. The `Registry` is responsible for this function and maintains a mapping of `tokenId`s to `OutcomeToken` objects which include information relating to the specific `tokenId` including the `complement`'s `tokenId`, and the parent `conditionId`. It is the responsibility of operators to register new outcome tokens. Note all methods assume benevolent input by the operator, specifically that they are registering the correct tokenIds/complements/conditions and that they are all binary outcomes that are valid in the context of the CTF contract.
 
 
 ## `getConditionId`
@@ -830,13 +757,13 @@ Gets the associated `conditionId` for a `tokenId` by looking it up in the `regis
 
 Parameters:
 
-```java
+```solidity
 uint256 token // token id for which to get conditionId for
 ```
 
 Returns:
 
-```java
+```solidity
 bytes32 // parent conditionId of the token according to the registry
 ```
 
@@ -846,13 +773,13 @@ Gets the complementary `tokenId` for a specified `tokenId` by looking it up in t
 
 Parameters:
 
-```java
+```solidity
 uint256 token // token id for which to get complement token id for
 ```
 
 Returns:
 
-```java
+```solidity
 uint256 // complement token id
 ```
 
@@ -862,7 +789,7 @@ Checks whether the `token` id and `complement` id correspond according to `token
 
 Parameters:
 
-```java
+```solidity
 uint256 token // token id for which to check complement
 uint256 complement // suspected complement token id of token
 ```
@@ -873,7 +800,7 @@ Checks whether a valid token id (`!=0`) has been registered. Reverts if not
 
 Parameters:
 
-```java
+```solidity
 uint256 tokenId // token id to validate registration for
 ```
 
@@ -883,7 +810,7 @@ Checks whether the `token0` id and `token1` id are equal if it has been register
 
 Parameters:
 
-```java
+```solidity
 uint256 token0 // first token id to compare for equality 
 uint256 token1 // second token id to compare for equality
 ```
@@ -894,7 +821,7 @@ Registers complementary token pair.
 
 Parameters:
 
-```java
+```solidity
 uint256 token0 // first token id of pair
 uint256 token1 // second token id of pair
 bytes32 conditionID // cft conditionId for the pair

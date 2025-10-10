@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.15;
 
-import {Owned} from "solmate/auth/Owned.sol";
-import {IAuthorized, IAuthorizedEE} from "common/auth/interfaces/IAuthorized.sol";
+import {Owned} from "./Owned.sol";
+import {IAuthorized, IAuthorizedEE} from "./interfaces/IAuthorized.sol";
 
 abstract contract Authorized is Owned, IAuthorized {
     mapping(address => bool) public authorized;
