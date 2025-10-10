@@ -1,7 +1,11 @@
-# Next.js & Tailwind CSS Monorepo Template
+# Prediction Market dApp Example
 
-This is a monorepo template using:
+Prediction market dApp with Solidity smart contracts.
 
+- Predict an outcome of a real-world event 
+- Create, find, predict and withdraw markets
+
+Front-End Tech Stack:
 - 📏 [TypeScript 5.0](https://www.typescriptlang.org/)
 - ⚡️ [Next.js 13.2](https://nextjs.org/)
 - ⚛️ [React 18.2](https://reactjs.org/)
