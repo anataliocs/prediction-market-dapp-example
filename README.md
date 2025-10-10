@@ -11,8 +11,6 @@ Prediction market dApp with Solidity smart contracts.
 
 See `system-design.png` or `system-design.pdf` in root directory for a higher-resolution, more readable version.
 
-
-
 **Front-End Tech Stack:**
 - 📏 [TypeScript 5.0](https://www.typescriptlang.org/)
 - ⚡️ [Next.js 13.2](https://nextjs.org/)
@@ -229,7 +227,7 @@ Requirements:
 
 ## `fillOrders`
 
-Fills an array of orders for the corresponding fill amounts with `msg.sender` as the taker
+Fills an array with orders for the corresponding fill amounts with `msg.sender` as the taker
 
 Parameters:
 
@@ -319,7 +317,10 @@ Trading implements the core exchange logic for trading CTF assets.
 
 ## `getOrderStatus`
 
-Get the status of an order. An order can either be not-filled, partially filled or fully filled. If an order has not been filled, its hash will not exist in the `orderStatus` mapping. If it has been partially filled its hash will exist in this mapping and the maker amount `remaining` will be defined. If the order has been fully filled the hash will exist and the `isCompleted` bool in the `OrderStatus` object will be `true`
+Get the status of an order. An order can either be not-filled, partially filled or fully filled. 
+If an order has not been filled, its hash will not exist in the `orderStatus` mapping. 
+If it has been partially filled its hash will exist in this mapping and the maker amount `remaining` will be defined. 
+If the order has been fully filled the hash will exist and the `isCompleted` bool in the `OrderStatus` object will be `true`
 
 Parameters:
 
@@ -342,45 +343,6 @@ Parameters:
 ```solidity
 Order order // order to be validated
 ```
-
-## `cancelOrder`
-
-Cancels an order. Calls `_cancelOrder` with the order. An order can only be cancelled by its maker, the address which holds funds for the order.
-
-Parameters:
-
-```solidity
-Order order // order to be cancelled
-```
-
-## `cancelOrders`
-
-Cancels a set of orders by calling `_cancelOrder` on each order is provided order array.
-
-Parameters:
-
-```solidity
-Order[] orders // orders to be cancelled
-```
-
-## `_cancelOrder`
-
-Cancels an order by setting its status to completed.
-
-Requirements:
-
-- order's `maker` must be `msg.sender`
-- order cannot have already been filled
-
-Parameters:
-
-```solidity
-Order order // order  to cancel
-```
-
-Emits:
-
-- `OrderCancelled(orderHash)`
 
 ## `_validateOrder`
 
@@ -604,10 +566,6 @@ uint256 tokenId // token id of fee, 0 if collateral
 uint256 fee // fee amount
 ```
 
-Emits:
-
-- `FeeReceived(payer, receiver, tokenId, fee)`
-
 ## `_updateOrderStatus`
 
 Updates the order status. Will mark as completed if the making amount plus any already filled amount of order is equal to total order size, otherwise will calculate and store the remaining amount.
@@ -647,7 +605,7 @@ uint256 // amount of tokenId in contract
 
 # Asset Operations
 
-Provides balance fetching, transferring and ctf utilities as an abstract contract. Implements both the `IAssetOperations` and `IAssets` interface.
+Provides balance fetching, transferring and ctf utilities as an abstract contract.
 
 ## `_getBalance`
 
@@ -667,7 +625,7 @@ uint256 // token balance
 
 ## `_transfer`
 
-Transfers a quantity of assets, defined by a tokenID, from one address to another address. Calls either `_transferCollateral` or `TransferHelper._transferFromERC1155`.
+Transfers a quantity of assets, defined by a tokenID, from one address to another address.
 
 Parameters:
 
@@ -719,7 +677,10 @@ uint256 amount // quantity of complete sets to burn for their underlying collate
 
 The `Exchange` supports "binary matching". 
 This assumes that two complementary tokens are always worth, in sum, 1 unit of underlying collateral. 
-This is enforced by the CTF contract which always allows minting and merging of full sets (complete collection of outcomes, in our case `A` and its binary complement `A'`). What this ultimately unlocks for the `CTFExchange` is matching between buy orders of `A` and `A'` (via a preceeding "mint" operation), and sell orders of `A` and `A'` (via a succeeding "merge" operation). The `CTFExchange` gets orders to match and is able to determine whether or not a "mint" or "merge" operation is ncessary. The challenge, is that the "mint"/"merge" operation requires knowing the order's base asset's (conditional token) corresponding `conditionId`. Thus, there needs to be a way for the `conditionId` to be gotten from the `tokenId`. The `Registry` is responsible for this function and maintains a mapping of `tokenId`s to `OutcomeToken` objects which include information relating to the specific `tokenId` including the `complement`'s `tokenId`, and the parent `conditionId`. It is the responsibility of operators to register new outcome tokens. Note all methods assume benevolent input by the operator, specifically that they are registering the correct tokenIds/complements/conditions and that they are all binary outcomes that are valid in the context of the CTF contract.
+This is enforced by the CTF contract which always allows minting and merging of full sets (complete collection of outcomes, in our case `A` and its binary complement `A'`). What this ultimately unlocks for the `Exchange` is matching between buy orders of `A` and `A'` (via a preceeding "mint" operation), and sell orders of `A` and `A'` (via a succeeding "merge" operation). 
+The `Exchange` gets orders to match and is able to determine whether or not a "mint" or "merge" operation is necessary. 
+The challenge, is that the "mint"/"merge" operation requires knowing the order's base asset's (conditional token) corresponding `conditionId`. 
+Thus, there needs to be a way for the `conditionId` to be gotten from the `tokenId`. The `Registry` is responsible for this function and maintains a mapping of `tokenId`s to `OutcomeToken` objects which include information relating to the specific `tokenId` including the `complement`'s `tokenId`, and the parent `conditionId`. It is the responsibility of operators to register new outcome tokens. Note all methods assume benevolent input by the operator, specifically that they are registering the correct tokenIds/complements/conditions and that they are all binary outcomes that are valid in the context of the CTF contract.
 
 
 ## `getConditionId`
