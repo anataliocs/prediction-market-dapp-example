@@ -5,7 +5,13 @@ Prediction market dApp with Solidity smart contracts.
 - Predict an outcome of a real-world event 
 - Create, find, predict and withdraw markets
 
-Front-End Tech Stack:
+## System Design
+
+<img width="4807" height="1139" alt="Prediction High-Level Flow" src="https://github.com/user-attachments/assets/6599a416-b62e-453c-8ad7-9a9415b37cad" />
+
+See `system-design.pdf` in root directory for higher-resolution, more readable version.
+
+**Front-End Tech Stack:**
 - 📏 [TypeScript 5.0](https://www.typescriptlang.org/)
 - ⚡️ [Next.js 13.2](https://nextjs.org/)
 - ⚛️ [React 18.2](https://reactjs.org/)
@@ -22,9 +28,7 @@ Front-End Tech Stack:
 - 🏎️ [Turborepo](https://turbo.build/repo)
 - 👷 [Github Actions](https://github.com/features/actions)
 
-## What's inside?
-
-This monorepo includes a few apps and packages.
+----
 
 ### Apps and Packages
 
@@ -41,9 +45,9 @@ This monorepo includes a few apps and packages.
 - `packages/tailwindcss-config`: shared Tailwind CSS configuration
 - `packages/typescript-config`: shared `tsconfig.json` files
 
-## Using this template
+## Getting Started
 
-Run the following command:
+**Run the following command:**
 
 ```
 git clone https://github.com/Developer-DAO/academy-turbo
