@@ -334,38 +334,10 @@ Returns:
 OrderStatus // status object for the order hash
 ```
 
-## `validateOrder`
-
-Validates an order. Hashes an order and calls `_validateOrder` with the order hash and order object.
-
-Parameters:
-
-```solidity
-Order order // order to be validated
-```
-
-## `_validateOrder`
-
-Validates an order alongside its hash. Reverts if order is not valid.
-
-Requirements:
-
-- order is not expired
-- order fee rate is not greater than configured max fee rate
-- order signature is valid for order
-- order is not already filled
-- order has valid nonce
-
-Parameters:
-
-```solidity
-bytes32 orderHash // hash of order to validate
-Order order // order object corresponding to orderHash
-```
-
 ## `_fillOrder`
 
-Fills an order against the caller. First validates the order, then fills it up to the amount specified by `fillAmount`, updates the status and takes calculated fee.
+Fills an order against the caller. Fill order up to the amount specified by `fillAmount`, 
+updates the status and takes calculated fee.
 
 Parameters:
 
@@ -440,7 +412,8 @@ uint256[] makerFillAmounts // maker amounts to fill on each maker order
 
 ## `_fillMakerOrder`
 
-Fills a maker order. In doing so, validates it is marketable with a supplied taker order, derives the pre/post matching operation and charges fees.
+Fills a maker order. Marketable with a supplied taker order, derives the pre/post matching operation and charges 
+fees.
 
 Requirements:
 
@@ -460,29 +433,7 @@ Emits:
 
 - `OrderFilled(hashOrder(makerOrder), takerOrder.maker, makerOrder.makerAssetId, makerOrder.takerAssetId, making, remaining, fee)`
 
-
-## `_validateOrderAndCalcTaking`
-
-Performs common order validation and calculates taking amount for a matched order. The taking amount is proportional to the making amount that is being filled. Additionally the order status is updated to reflect the amount that is being filled.
-
-Requirements:
-
-- Order is valid
-- Making amount can be filled on order
-
-Parameters:
-
-```solidity
-Order order // order being validated
-uint256 making // maker amount to be filled of order
-```
-
-Returns:
-
-```solidity
-uint256 takingAmount // amount of taking amount corresponding to supplied taking amount 
-uint256 remainingAmount // maker amount remaining on the order. 
-```
+----
 
 ## `_fillFacingExchange`
 
@@ -531,25 +482,6 @@ Parameters:
 uint256 makingAmount // Amount to be filled in terms of maker amount, used as amount in merge case
 uint256 takingAmount // Amount to be filled in terms of taker amount, used as amount in mint case
 Order order // order to be filled
-MatchType matchType // the match type
-```
-
-## `_validateTakerAndMaker`
-
-Ensures the taker and maker orders can be matched against each other.
-
-Requirements:
-
-- orders are crossing
-- in case of NORMAL, conditional tokenIds match across maker and taker order
-- in case of MINT, conditional tokenIds should be complementary
-- in case of MERGE, conditional tokenIds should be complementary
-
-Parameters:
-
-```solidity
-Order takerOrder // the taker order
-Order makerOrder // the maker order
 MatchType matchType // the match type
 ```
 
@@ -713,38 +645,6 @@ Returns:
 
 ```solidity
 uint256 // complement token id
-```
-
-## `validateComplement`
-
-Checks whether the `token` id and `complement` id correspond according to `token`'s value in the `registry` mapping. Reverts if not.
-
-Parameters:
-
-```solidity
-uint256 token // token id for which to check complement
-uint256 complement // suspected complement token id of token
-```
-
-## `validateTokenId`
-
-Checks whether a valid token id (`!=0`) has been registered. Reverts if not
-
-Parameters:
-
-```solidity
-uint256 tokenId // token id to validate registration for
-```
-
-## `validateMatchingTokenIds`
-
-Checks whether the `token0` id and `token1` id are equal if it has been registered. Reverts if not.
-
-Parameters:
-
-```solidity
-uint256 token0 // first token id to compare for equality 
-uint256 token1 // second token id to compare for equality
 ```
 
 ## `_registerToken`

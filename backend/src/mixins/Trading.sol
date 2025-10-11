@@ -23,30 +23,6 @@ abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceM
         return orderStatus[ orderHash];
     }
 
-    /// @notice Validates an order
-    /// @notice order - The order to be validated
-    function validateOrder(Order memory order) public view {
-        bytes32 orderHash = hashOrder(order);
-        _validateOrder(orderHash, order);
-    }
-
-    function _validateOrder(bytes32 orderHash, Order memory order) internal view {
-        // Validate order expiration
-        if (order.expiration > 0 && order.expiration < block.timestamp) revert OrderExpired();
-
-        // Validate signature
-        validateOrderSignature(orderHash, order);
-
-        // Validate the token to be traded
-        validateTokenId(order.tokenId);
-
-        // Validate that the order can be filled
-        if (orderStatus[orderHash].isFilledOrCancelled) revert OrderFilledOrCancelled();
-
-        // Validate nonce
-        if (!isValidNonce(order.maker, order.nonce)) revert InvalidNonce();
-    }
-
     /// @notice Fills an order against the caller
     /// @param order        - The order to be filled
     /// @param fillAmount   - The amount to be filled, always in terms of the maker amount
@@ -115,8 +91,6 @@ abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceM
         // Mock flat fee
         uint256 fee = 1;
 
-        // Execute transfers
-
         // Transfer order proceeds post fees from the Exchange to the taker order maker
         _transfer(address(this), takerOrder.maker, takerAssetId, taking - fee);
 
@@ -156,9 +130,6 @@ abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceM
     function _fillMakerOrder(Order memory takerOrder, Order memory makerOrder, uint256 fillAmount) internal {
         MatchType matchType = _deriveMatchType(takerOrder, makerOrder);
 
-        // Ensure taker order and maker order match
-        _validateTakerAndMaker(takerOrder, makerOrder, matchType);
-
         uint256 making = fillAmount;
         (uint256 taking, bytes32 orderHash) = _performOrderChecks(makerOrder, making);
 
@@ -174,23 +145,16 @@ abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceM
     }
 
     /// @notice Performs common order computations and validation
-    /// 1) Validates the order taker
-    /// 2) Computes the order hash
-    /// 3) Validates the order
-    /// 4) Computes taking amount
-    /// 5) Updates the order status in storage
+    /// 1) Computes the order hash
+    /// 2) Computes taking amount
+    /// 3) Updates the order status in storage
     /// @param order    - The order being prepared
     /// @param making   - The amount of the order being filled, in terms of maker amount
     function _performOrderChecks(Order memory order, uint256 making)
         internal
         returns (uint256 takingAmount, bytes32 orderHash)
     {
-        _validateTaker(order.taker);
-
         orderHash = hashOrder(order);
-
-        // Validate order
-        _validateOrder(orderHash, order);
 
         // Calculate taking amount
         takingAmount = CalculatorHelper.calculateTakingAmount(making, order.makerAmount, order.takerAmount);
@@ -257,43 +221,24 @@ abstract contract Trading is ITrading, IHashing, IRegistry, ISignatures, INonceM
         uint256 takerAssetId,
         MatchType matchType
     ) internal {
+
+
+
         if (matchType == MatchType.COMPLEMENTARY) {
             // Indicates a buy vs sell order
             // no match action needed
             return;
         }
-        if (matchType == MatchType.MINT) {
+        else if (matchType == MatchType.MINT) {
             // Indicates matching 2 buy orders
             // Mint new Outcome tokens using Exchange collateral balance and fill buys
             return _mint(getConditionId(takerAssetId), takingAmount);
         }
-        if (matchType == MatchType.MERGE) {
+        else if (matchType == MatchType.MERGE) {
             // Indicates matching 2 sell orders
             // Merge the Exchange Outcome token balance into collateral and fill sells
             return _merge(getConditionId(makerAssetId), makingAmount);
         }
-    }
-
-    /// @notice Ensures the taker and maker orders can be matched against each other
-    /// @param takerOrder   - The taker order
-    /// @param makerOrder   - The maker order
-    function _validateTakerAndMaker(Order memory takerOrder, Order memory makerOrder, MatchType matchType)
-        internal
-        view
-    {
-        if (!CalculatorHelper.isCrossing(takerOrder, makerOrder)) revert NotCrossing();
-
-        // Ensure orders match
-        if (matchType == MatchType.COMPLEMENTARY) {
-            if (takerOrder.tokenId != makerOrder.tokenId) revert MismatchedTokenIds();
-        } else {
-            // both bids or both asks
-            validateComplement(takerOrder.tokenId, makerOrder.tokenId);
-        }
-    }
-
-    function _validateTaker(address taker) internal view {
-        if (taker != address(0) && taker != msg.sender) revert NotTaker();
     }
 
     function _chargeFee(address payer, address receiver, uint256 tokenId, uint256 fee) internal {
