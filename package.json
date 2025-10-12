@@ -1,10 +1,11 @@
 {
   "private": true,
-  "name": "academy-turbo",
+  "name": "prediction-market-dapp-example",
   "version": "1.0.0",
+  "author": "anataliocs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Developer-DAO/academy-turbo.git"
+    "url": "https://github.com/anataliocs/prediction-market-dapp-example"
   },
   "scripts": {
     "clean": "turbo run clean --no-daemon",
